@@ -6,6 +6,9 @@ import (
 	"strconv"
 
 	"github.com/famcache/famcache-go/domain"
+	"github.com/famcache/famcache-go/internal/jobs"
+	"github.com/famcache/famcache-go/internal/messaging"
+	"github.com/famcache/famcache-go/internal/task"
 	"github.com/google/uuid"
 )
 
@@ -19,7 +22,8 @@ func (c *FamcacheClient) Connect() error {
 	}
 
 	c.socket = socket
-	c.messaging.(*Messaging).socket = &socket
+	c.messaging.(*messaging.Messaging).SetSocket(&socket)
+	c.jobs.(*jobs.JobsManager).SetSocket(&socket)
 
 	go c.Listen()
 
@@ -40,7 +44,7 @@ func (c *FamcacheClient) Set(key string, value string, ttl *uint64) error {
 		return err
 	}
 
-	task := NewTask()
+	task := task.NewTask()
 
 	c.taskRegistry.Set(uuid, task)
 
@@ -66,7 +70,7 @@ func (c *FamcacheClient) Get(key string) (string, error) {
 		return "", err
 	}
 
-	task := NewTask()
+	task := task.NewTask()
 	defer c.taskRegistry.Free(uuid)
 
 	c.taskRegistry.Set(uuid, task)
@@ -93,7 +97,7 @@ func (c *FamcacheClient) Delete(key string) error {
 		return err
 	}
 
-	task := NewTask()
+	task := task.NewTask()
 	defer c.taskRegistry.Free(uuid)
 
 	c.taskRegistry.Set(uuid, task)
@@ -109,4 +113,8 @@ func (c *FamcacheClient) Delete(key string) error {
 
 func (c *FamcacheClient) Messaging() domain.Messaging {
 	return c.messaging
+}
+
+func (c *FamcacheClient) Jobs() domain.JobsManager {
+	return c.jobs
 }

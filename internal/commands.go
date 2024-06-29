@@ -36,6 +36,14 @@ func (c *Commands) Unsubscribe(id string, topic string) string {
 	return fmt.Sprintf("%s UNSUBSCRIBE %s\n", id, topic)
 }
 
+func (c *Commands) RegisterJob(id string, delay uint64, periodic bool) string {
+	return fmt.Sprintf("%s JOB_REGISTER %d %t\n", id, delay, periodic)
+}
+
+func (c *Commands) CancelJob(id string, jobID string) string {
+	return fmt.Sprintf("%s JOB_CANCEL %s\n", id, jobID)
+}
+
 func NewCommands() domain.Commands {
 	return &Commands{}
 }
