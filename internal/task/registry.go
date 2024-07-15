@@ -1,4 +1,4 @@
-package internal
+package task
 
 import "github.com/famcache/famcache-go/domain"
 

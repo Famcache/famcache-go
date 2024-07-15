@@ -1,6 +1,10 @@
 package internal
 
-import "github.com/famcache/famcache-go/internal/reply"
+import (
+	"github.com/famcache/famcache-go/internal/jobs"
+	"github.com/famcache/famcache-go/internal/messaging"
+	"github.com/famcache/famcache-go/internal/reply"
+)
 
 func (c *FamcacheClient) Listen() error {
 	for {
@@ -13,7 +17,7 @@ func (c *FamcacheClient) Listen() error {
 		if reply.IsMessagingEvent(reply_msg) {
 			messaging_msg := reply.NewMessagingReply(reply_msg)
 
-			c.messaging.(*Messaging).trigger(messaging_msg.Topic, messaging_msg.Data)
+			c.messaging.(*messaging.Messaging).Trigger(messaging_msg.Topic, messaging_msg.Data)
 
 			continue
 		}
@@ -28,6 +32,12 @@ func (c *FamcacheClient) Listen() error {
 			}
 
 			task.Execute(event.Data, event.Status)
+		}
+
+		if reply.IsJobReply(reply_msg) {
+			job_msg := reply.NewJobReply(reply_msg)
+
+			c.jobs.(*jobs.JobsManager).Trigger(job_msg)
 		}
 	}
 }

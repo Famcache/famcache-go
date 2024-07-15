@@ -1,17 +1,10 @@
-package internal
+package messaging
 
 import (
 	"net"
 
-	"github.com/famcache/famcache-go/domain"
 	"github.com/google/uuid"
 )
-
-type Messaging struct {
-	subscriptions map[string]chan string
-	socket        *net.Conn
-	commands      domain.Commands
-}
 
 func (m *Messaging) Publish(topic string, message string) error {
 	uuid := uuid.New().String()
@@ -39,7 +32,7 @@ func (m *Messaging) Subscribe(topic string) (<-chan string, error) {
 	return m.subscriptions[topic], nil
 }
 
-func (m *Messaging) trigger(topic string, data string) {
+func (m *Messaging) Trigger(topic string, data string) {
 	if ch, ok := m.subscriptions[topic]; ok {
 		ch <- data
 	}
@@ -61,9 +54,6 @@ func (m *Messaging) Unsubscribe(topic string) error {
 	return nil
 }
 
-func NewMessaging(commands domain.Commands) domain.Messaging {
-	return &Messaging{
-		subscriptions: make(map[string]chan string),
-		commands:      commands,
-	}
+func (m *Messaging) SetSocket(socket *net.Conn) {
+	m.socket = socket
 }

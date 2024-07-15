@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/famcache/famcache-go/domain"
-	"github.com/google/uuid"
 )
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -20,18 +19,19 @@ type CacheReply struct {
 	Data   string
 }
 
+// <uuid> STORE <status> <data?>
 func NewCacheReply(reply string) CacheReply {
 	parts := normalizeReply(reply)
 
 	data := ""
 
-	if len(parts) > 2 {
-		data = parts[2]
+	if len(parts) > 3 {
+		data = parts[3]
 	}
 
 	return CacheReply{
 		ID:     parts[0],
-		Status: StringToStatus(parts[1]),
+		Status: StringToStatus(parts[2]),
 		Data:   data,
 	}
 }
@@ -49,14 +49,9 @@ func StringToStatus(status string) domain.Status {
 	}
 }
 
+// <uuid> STORE <status> <data>
 func IsCacheReply(reply string) bool {
 	parts := strings.Split(strings.ReplaceAll(reply, "\n", ""), " ")
 
-	if len(parts) < 2 {
-		return false
-	}
-
-	_, err := uuid.Parse(parts[0])
-
-	return err == nil
+	return parts[1] == STORE_REPLY
 }

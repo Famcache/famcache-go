@@ -8,4 +8,7 @@ type Commands interface {
 	Publish(id string, topic string, data string) string
 	Subscribe(id string, topic string) string
 	Unsubscribe(id string, topic string) string
+
+	RegisterJob(id string, delay uint64, periodic bool) string
+	CancelJob(id string, jobID string) string
 }

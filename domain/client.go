@@ -9,4 +9,5 @@ type Client interface {
 	Delete(key string) error
 
 	Messaging() Messaging
+	Jobs() JobsManager
 }

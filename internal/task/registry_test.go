@@ -1,15 +1,15 @@
-package internal_test
+package task_test
 
 import (
 	"testing"
 
-	"github.com/famcache/famcache-go/internal"
+	"github.com/famcache/famcache-go/internal/task"
 )
 
 func TestRegistrySetAndGet(t *testing.T) {
-	registry := internal.NewRegistry()
+	registry := task.NewRegistry()
 
-	registry.Set("1", internal.NewTask())
+	registry.Set("1", task.NewTask())
 
 	task, ok := registry.GetById("1")
 
@@ -23,9 +23,9 @@ func TestRegistrySetAndGet(t *testing.T) {
 }
 
 func TestRegistryFree(t *testing.T) {
-	registry := internal.NewRegistry()
+	registry := task.NewRegistry()
 
-	registry.Set("1", internal.NewTask())
+	registry.Set("1", task.NewTask())
 
 	registry.Free("1")
 
